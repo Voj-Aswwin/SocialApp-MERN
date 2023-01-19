@@ -9,7 +9,10 @@ import morgan from "morgan"
 import path from "path" //native package in nodeJS
 import { fileURLToPath } from "url";
 import { register } from "./controllers/auth.js"
-import authRoutes from "./routes/auth.js"
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/user.js";
+import postRoutes from "./routes/post.js";
+import { verifyToken } from "./middleware/auth.js";
 
 /* CONFIGURATIONS */
 const __filename = fileURLToPath(import.meta.url);
@@ -38,9 +41,12 @@ const upload = multer({ storage });
 
 /*ROUTES WITH FILE UPLOADS*/
 app.post("/auth/register", upload.single("picture"), register)
+app.post("/posts", verifyToken, upload.single("picture"), createPost)
 
 /*ROUTES*/
-app.use("/auth",authRoutes)
+app.use("/auth", authRoutes)
+app.use("/user", userRoutes)
+app.use("/post", postRoutes)
 
 /* MONGOOSE SETUP */
 
